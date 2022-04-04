@@ -6,6 +6,7 @@ $(document).ready(function(){
     var carouselLength = $('.carousel-item').length - 1;
     let counterLoad= new Array(5);
     let counterMax= new Array(5);
+
     for(var i=0;i<6;i++){
         counterLoad[i]=0;
     }
@@ -52,32 +53,53 @@ $(document).ready(function(){
     function addMore(){
         //traz a categoria
         let category = getCategory();
-        //atualiza o contador
-        $.post("handler.php",{ counter: counterLoad,counterMax:counterMax,category: category },
-        function(data) {
-            if(data){
-                var content;
-                $.get("components/modalImages/"+data, function(getData){
-                    content= getData;
-                    $('.carousel-inner').append(content);
-                    $('.carousel-control-next').removeClass('d-none');
-                    carouselLength = $('.carousel-item').length - 1;
-                    $('.carousel-control-next-icon').removeClass('addMoreIcon');
-                    $("#carouselImages").carousel("next");
-                });
-                $.get("components/sectionImages/"+data, function(getData){
-                    content= getData;
-                    $('#images').append(content);
-                    
-                });
-                counterLoad[category]++;
-                if(counterLoad[category]>=counterMax[category]){
-                    $('#loadMoreButton').addClass('d-none');
-                }
+        let pageToLoad=false;
+        switch (category){
+            case 0:
+                pageToLoad='tudo';
+                break;
+            case 1:
+                pageToLoad="salas";
+                break;
+            case 2:
+                pageToLoad="cozinhas";
+                break;
+            case 3:
+                pageToLoad="quartos";
+                break;
+            case 4:
+                pageToLoad="banheiros";
+                break;
+            case 5:
+                pageToLoad="outros";
+                break;
+            default:
+                pageToLoad=false;
+        }
+        pageToLoad=pageToLoad+counterLoad[category]+".html";
+        
+        if(pageToLoad){
+            var content;
+            $.get("components/modalImages/"+pageToLoad, function(getData){
+                content= getData;
+                $('.carousel-inner').append(content);
+                $('.carousel-control-next').removeClass('d-none');
+                carouselLength = $('.carousel-item').length - 1;
+                $('.carousel-control-next-icon').removeClass('addMoreIcon');
+                $("#carouselImages").carousel("next");
+            });
+            $.get("components/sectionImages/"+pageToLoad, function(getData){
+                content= getData;
+                $('#images').append(content);
+                
+            });
+            counterLoad[category]++;
+            if(counterLoad[category]>=counterMax[category]){
+                $('#loadMoreButton').addClass('d-none');
             }
-            
-        });
+        }
     }
+
     function getCategory(){
         let categoryNumber;
         $("#dropdownButton a").each(function(){
