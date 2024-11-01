@@ -1,204 +1,144 @@
-$(document).ready(function(){
-    // tooltip
-    $('[data-toggle="tooltip"]').tooltip();
+$('[data-toggle="tooltip"]').tooltip();
 
-    // Carousel
-    var carouselLength = $('.carousel-item').length - 1;
-    let counterLoad= new Array(5);
-    let counterMax= new Array(5);
+// Carousel
+var carouselLength = $('.carousel-item').length - 1;
+let counterLoad = new Array(5);
+let counterMax = new Array(5);
+// tooltip
+const categoriesNames = ['geral', 'salas', 'cozinhas', 'quartos', 'banheiros', 'outros'];
+for (var i = 0; i < 6; i++) {
+    counterLoad[categoriesNames[i]] = 0;
+}
+counterMax[0] = 1;
+counterMax[1] = 1;
+counterMax[2] = 2;
+counterMax[3] = 2;
+counterMax[4] = 0;
+counterMax[5] = 1;
 
-    for(var i=0;i<6;i++){
-        counterLoad[i]=0;
+const categories = {
+    'geral': {
+        counterMax: 1,
+        categoryNumber: 0
+    },
+    'salas': {
+        counterMax: 1,
+        categoryNumber: 1
+    },
+    'cozinhas': {
+        counterMax: 2,
+        categoryNumber: 2
+    },
+    'quartos': {
+        counterMax: 2,
+        categoryNumber: 3
+    },
+    'banheiros': {
+        counterMax: 0,
+        categoryNumber: 4
+    },
+    'outros': {
+        counterMax: 1,
+        categoryNumber: 5
     }
-    
-    counterMax[0]=1;
-    counterMax[1]=1;
-    counterMax[2]=2;
-    counterMax[3]=2;
-    counterMax[4]=0;
-    counterMax[5]=1;
-    
-    $("#carouselImages").carousel({wrap: false}).on('slide.bs.carousel', function (e) {
+}
+
+function upperCaseFirstLetter(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
+function selectCategory(category) {
+    $("#dropdownNav a").removeClass("active");
+    $("#dropdownButton a").removeClass("active");
+    $(".carousel-inner").empty();
+    $("#images").empty();
+
+    $(".carousel-inner").load(`components/modalImages/${category}.html`)
+    // check if this function after this thing is really needed
+    $("#images").load(`components/sectionImages/${category}.html`)
+    if (category === 'banheiros') $('#loadMoreButton').addClass('d-none')
+}
+
+function updateVariables(elementSelected) {
+    const category = $(elementSelected).text().toLowerCase();
+    counterLoad[category] = 0;
+    $('.carousel-control-next').removeClass('d-none');
+    carouselLength = $('.carousel-item').length - 1;
+    elementSelected.classList.add('active');
+    $('#dropdownButtonTitle').text(upperCaseFirstLetter(category));
+}
+
+function addMore() {
+    const category = getCategory();
+    const pageToLoad = category + counterLoad[category] + ".html";
+
+    if (pageToLoad) {
+        $.get("components/modalImages/" + pageToLoad, function (content) {
+            $('.carousel-inner').append(content);
+            $('.carousel-control-next').removeClass('d-none');
+            carouselLength = $('.carousel-item').length - 1;
+            $('.carousel-control-next-icon').removeClass('addMoreIcon');
+            $("#carouselImages").carousel("next");
+        });
+        $.get("components/sectionImages/" + pageToLoad, function (content) {
+            $('#images').append(content);
+        });
+        counterLoad[category]++;
+        if (counterLoad[category] >= counterMax[category]) {
+            $('#loadMoreButton').addClass('d-none');
+        }
+    }
+}
+
+function getCategory() {
+    return $("#dropdownButton a.active").text().toLowerCase();
+}
+
+$(document).ready(function () {
+    $("#carouselImages").carousel({ wrap: false }).on('slide.bs.carousel', function (e) {
         carouselLength = $('.carousel-item').length - 1;
         if (e.to == 0) {
             $('.carousel-control-prev').addClass('d-none');
             $('.carousel-control-next').removeClass('d-none');
             $('.carousel-control-next-icon').removeClass('addMoreIcon');
-        }else if (e.to == carouselLength) {
+        } else if (e.to == carouselLength) {
             $('.carousel-control-prev').removeClass('d-none');
-            let category=getCategory();
-            if(counterLoad[category]<counterMax[category]){
+            let category = getCategory();
+            if (counterLoad[category] < counterMax[category]) {
                 $('.carousel-control-next-icon').addClass('addMoreIcon');
-            }else{
+            } else {
                 $('.carousel-control-next').addClass('d-none');
                 $('#loadMoreButton').addClass('d-none');
             }
-        }else {
+        } else {
             $('.carousel-control-prev').removeClass('d-none');
             $('.carousel-control-next').removeClass('d-none');
             $('.carousel-control-next-icon').removeClass('addMoreIcon');
         }
     })
 
-    
-        
-    $(".carousel-control-next").click(function(){
-        if($('.carousel-control-next').find('span.addMoreIcon').length !== 0){
+    $(".carousel-control-next").click(function () {
+        if ($('.carousel-control-next').find('span.addMoreIcon').length !== 0) {
             addMore();
         }
     });
-    $("#loadMoreButton").click(function(){
-        addMore();
-    });
-    function addMore(){
-        //traz a categoria
-        let category = getCategory();
-        let pageToLoad=false;
-        switch (category){
-            case 0:
-                pageToLoad='tudo';
-                break;
-            case 1:
-                pageToLoad="salas";
-                break;
-            case 2:
-                pageToLoad="cozinhas";
-                break;
-            case 3:
-                pageToLoad="quartos";
-                break;
-            case 4:
-                pageToLoad="banheiros";
-                break;
-            case 5:
-                pageToLoad="outros";
-                break;
-            default:
-                pageToLoad=false;
-        }
-        pageToLoad=pageToLoad+counterLoad[category]+".html";
-        
-        if(pageToLoad){
-            var content;
-            $.get("components/modalImages/"+pageToLoad, function(getData){
-                content= getData;
-                $('.carousel-inner').append(content);
-                $('.carousel-control-next').removeClass('d-none');
-                carouselLength = $('.carousel-item').length - 1;
-                $('.carousel-control-next-icon').removeClass('addMoreIcon');
-                $("#carouselImages").carousel("next");
-            });
-            $.get("components/sectionImages/"+pageToLoad, function(getData){
-                content= getData;
-                $('#images').append(content);
-                
-            });
-            counterLoad[category]++;
-            if(counterLoad[category]>=counterMax[category]){
-                $('#loadMoreButton').addClass('d-none');
-            }
-        }
-    }
 
-    function getCategory(){
-        let categoryNumber;
-        $("#dropdownButton a").each(function(){
-            categoryNumber = $( "#dropdownButton a" ).index( this );
-            if ($( this ).hasClass( "active" )) {
-                return false;
-            }
-        });
-        return categoryNumber;
-    }
-    
-    
+
     // select category
-    $( "#dropdownNav a" ).click(function() {
-        var index = $( "#dropdownNav a" ).index( this );
-        if ( !$( this ).hasClass( "active" ) ) {
-            selectCategory(index);
-        }
+    $("#dropdownNav a").click(function () {
+        const category = $(this).text().toLowerCase();
+        selectCategory(category)
+        updateVariables(this)
     });
-    $( "#dropdownButton a" ).click(function() {
-        var index = $( "#dropdownButton a" ).index( this );
-        if ( !$( this ).hasClass( "active" ) ) {
-            selectCategory(index);
-        }
+    $("#dropdownButton a").click(function () {
+        const category = $(this).text().toLowerCase();
+        selectCategory(category)
+        updateVariables(this)
     });
-
-    
-    function selectCategory(index){
-        $("#dropdownNav a").removeClass("active");
-        $("#dropdownButton a").removeClass("active");
-        $(".carousel-inner").empty();
-        $("#images").empty();
-    
-        if(index==0){ //Fazer os includes das galerias, lembra de fazer um loading também
-            $(".carousel-inner").load("components/modalImages/tudo.html");
-            $("#images").load("components/sectionImages/tudo.html", function() {
-                updateVariables(index);
-            });
-
-            $("#dropdownButton button").text("Geral");
-            
-        }else if(index==1){
-            $(".carousel-inner").load("components/modalImages/salas.html");
-            $("#images").load("components/sectionImages/salas.html", function() {
-                updateVariables(index);
-            });
-
-            $("#dropdownButton button").text("Salas");
-            
-        }else if(index==2){
-            $(".carousel-inner").load("components/modalImages/cozinhas.html");
-            $("#images").load("components/sectionImages/cozinhas.html", function() {
-                updateVariables(index);
-            });
-            
-            $("#dropdownButton button").text("Cozinhas");
-        }else if(index==3){
-            $(".carousel-inner").load("components/modalImages/quartos.html");
-            $("#images").load("components/sectionImages/quartos.html", function() {
-                updateVariables(index);
-            });
-
-            $("#dropdownButton button").text("Quartos");
-        }else if(index==4){
-            $(".carousel-inner").load("components/modalImages/banheiros.html");
-            $("#images").load("components/sectionImages/banheiros.html", function() {
-                updateVariables(index);
-            });
-            $("#dropdownButton button").text("Banheiros");
-            // por enquanto só tem uma página dos banheiros, então tem que remover o botão de adicionar mais ao chamar
-            $('#loadMoreButton').addClass('d-none');
-        }else{
-            $(".carousel-inner").load("components/modalImages/outros.html");
-            $("#images").load("components/sectionImages/outros.html", function() {
-                updateVariables(index);
-            });
-            $("#dropdownButton button").text("Outros");
-            
-        }
-        
-    }
-    function updateVariables(index){
-  
-        counterLoad[index]=0;
-        $('.carousel-control-next').removeClass('d-none');
-        carouselLength = $('.carousel-item').length - 1;
-        $( "#dropdownButton a" ).eq(index).addClass('active');
-        $( "#dropdownNav a" ).eq(index).addClass('active');
-    }
-    
-    
 });
 
-
-
-
-
-function selectImage(elmnt){
-    var index = $( ".imgGaleria" ).index( elmnt );
+function selectImage(elmnt) {
+    var index = $(".imgGaleria").index(elmnt);
     $("#carouselImages").carousel(index);
     $("#carouselImages").carousel("pause");
 };
