@@ -50,10 +50,10 @@ function upperCaseFirstLetter(string) {
 function selectCategory(category) {
     $("#dropdownNav a").removeClass("active");
     $("#dropdownButton a").removeClass("active");
-    $(".carousel-inner").empty();
+    $("#carousel").empty();
     $("#images").empty();
 
-    $(".carousel-inner").load(`components/modalImages/${category}.html`)
+    $("#carousel").load(`components/modalImages/${category}.html`)
     // check if this function after this thing is really needed
     $("#images").load(`components/sectionImages/${category}.html`)
     if (category === 'banheiros') $('#loadMoreButton').addClass('d-none')
@@ -74,7 +74,7 @@ function addMore() {
 
     if (pageToLoad) {
         $.get("components/modalImages/" + pageToLoad, function (content) {
-            $('.carousel-inner').append(content);
+            $('#carousel-inner').append(content);
             $('.carousel-control-next').removeClass('d-none');
             carouselLength = $('.carousel-item').length - 1;
             $('.carousel-control-next-icon').removeClass('addMoreIcon');
@@ -84,7 +84,8 @@ function addMore() {
             $('#images').append(content);
         });
         counterLoad[category]++;
-        if (counterLoad[category] >= counterMax[category]) {
+
+        if (counterLoad[category] >= categories[category].counterMax) {
             $('#loadMoreButton').addClass('d-none');
         }
     }

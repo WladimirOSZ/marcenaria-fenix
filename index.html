@@ -83,7 +83,7 @@
     <div class="sectionImages" id="images">
     </div>
 
-    <button type="button" class="btn btn-success mt-3 buttonLoadMore" onclick="addMore()">
+    <button type="button" class="btn btn-success mt-3 buttonLoadMore" id="loadMoreButton" onclick="addMore()">
       Carregar Mais
     </button>
 
@@ -96,10 +96,7 @@
       style="border:0;" allowfullscreen="" loading="lazy"></iframe>
   </div>
 
-  <footer class="container-fluid bg-dark text-white mt-4 " id="contato">
-
-
-  </footer>
+  <footer class="container-fluid bg-dark text-white mt-4 " id="contato"></footer>
 
 
   <div class="modal" id="modalCarousel">
@@ -107,7 +104,7 @@
       <div id="carouselImages" class="carousel slide">
         <button type="button" class="close" data-dismiss="modal">&times;</button>
 
-        <div class="carousel-inner">
+        <div class="carousel-inner" id="carousel">
         </div>
 
         <a class="carousel-control-prev d-none" href="#carouselImages" data-slide="prev">
@@ -131,6 +128,7 @@
       }
 
       $("#images").load("components/sectionImages/geral.html");
+      $("#carousel").load("components/modalImages/geral.html");
     });
   </script>
 
