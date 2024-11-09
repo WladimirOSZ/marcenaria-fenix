@@ -1,7 +1,7 @@
 
-# Carpentry Workshop Portfolio
+# Marcenaria Fênix
 
-This project is a portfolio website showcasing the handcrafted furniture created at my father's woodworking shop (*marcenaria*). Originally built a few years ago, the site has been refactored to improve its functionality, organization, and appearance across both desktop and mobile devices.
+This project is a portfolio website showcasing the handcrafted furniture created at my father's woodworking shop. Originally built a few years ago, the site has been refactored to improve its functionality, organization, and appearance across both desktop and mobile devices.
 
 ## Demo
 Desktop:
