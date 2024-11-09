@@ -4,6 +4,13 @@
 This project is a portfolio website showcasing the handcrafted furniture created at my father's woodworking shop (*marcenaria*). Originally built a few years ago, the site has been refactored to improve its functionality, organization, and appearance across both desktop and mobile devices.
 
 ## Demo
+Desktop:
+
+[Screencast from 2024-11-09 18-22-30.webm](https://github.com/user-attachments/assets/a84bee3a-b49d-4420-a5db-5b487d2e688a)
+
+Mobile:
+
+[Screencast from 2024-11-09 18-47-14.webm](https://github.com/user-attachments/assets/3cd9a5dc-ca2a-4832-8df5-5555d09a2e39)
 
 
 ## Features
